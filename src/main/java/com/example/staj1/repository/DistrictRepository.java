@@ -4,4 +4,7 @@ import com.example.staj1.model.District;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 public interface DistrictRepository extends JpaRepository<District, Integer> {
+    boolean existsByName(String name);
+
+    boolean existsByNameAndIdNot(String name, Integer id);
 }

@@ -46,12 +46,12 @@ public class CustomerController {
     }
 
     @PostMapping("/toplu")
-    public List<Customer> topluEkle(@RequestBody List<CustomerRequest> customers) {
+    public List<Customer> topluEkle( @Valid  @RequestBody List<CustomerRequest> customers) {
         return customerService.topluEkle(customers);
     }
 
     @PutMapping("/{id}")
-    public Customer guncelle(
+    public Customer guncelle(@Valid
             @PathVariable Integer id,
             @RequestBody CustomerRequest customerRequest) {
 

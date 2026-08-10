@@ -12,6 +12,7 @@ public class District {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
+    @Column(length = 100)
     private String name;
     @ManyToOne
     @JoinColumn(name = "city_id")

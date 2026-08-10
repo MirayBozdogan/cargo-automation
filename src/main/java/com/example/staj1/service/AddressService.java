@@ -9,6 +9,7 @@ import com.example.staj1.repository.AddressRepository;
 import com.example.staj1.repository.CityRepository;
 import com.example.staj1.repository.CustomerRepository;
 import com.example.staj1.repository.DistrictRepository;
+import jakarta.persistence.EntityNotFoundException;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -32,34 +33,85 @@ public class AddressService {
         this.districtRepository = districtRepository;
     }
 
-    public Address addAddress(AddressRequest request, Integer customerId) {
+    public List<Address> get() {
+        return addressRepository.findAll();
+    }
+
+    public List<Address> getById(Integer customerId) {
+        return addressRepository.findByCustomerId(customerId);
+    }
+
+    public Address create(AddressRequest addressRequest, Integer customerId) {
 
         Customer customer = customerRepository.findById(customerId)
-                .orElseThrow();
+                .orElseThrow(() -> new IllegalArgumentException(
+                        "Müşteri bulunamadı."
+                ));
 
-        City city = cityRepository.findById(request.getCityId())
-                .orElseThrow();
+        City city = cityRepository.findById(addressRequest.getCityId())
+                .orElseThrow(() -> new IllegalArgumentException(
+                        "Şehir bulunamadı."
+                ));
 
-        District district = districtRepository.findById(request.getDistrictId())
-                .orElseThrow();
+        District district = districtRepository.findById(addressRequest.getDistrictId())
+                .orElseThrow(() -> new IllegalArgumentException(
+                        "İlçe bulunamadı."
+                ));
 
         Address address = new Address();
 
         address.setCity(city);
         address.setDistrict(district);
-        address.setNeighborhood(request.getNeighborhood());
-        address.setBuildingNo(request.getBuildingNo());
-        address.setApartmentNo(request.getApartmentNo());
+        address.setNeighborhood(addressRequest.getNeighborhood());
+        address.setBuildingNo(addressRequest.getBuildingNo());
+        address.setApartmentNo(addressRequest.getApartmentNo());
+        address.setCustomer(customer);
+        return addressRepository.save(address);
+    }
+
+    public Address update(Integer customer_id, Integer id, AddressRequest addressRequest){
+        Customer customer = customerRepository.findById(customer_id)
+                .orElseThrow(() ->
+                        new EntityNotFoundException("Müşteri bulunamadı."));
+
+        Address address = addressRepository.findById(id)
+                .orElseThrow(() ->
+                        new EntityNotFoundException("Adres bulunamadı."));
+
+        City city = cityRepository.findById(addressRequest.getCityId())
+                .orElseThrow(() ->
+                        new EntityNotFoundException("Şehir bulunamadı."));
+
+        District district = districtRepository.findById(addressRequest.getDistrictId())
+                .orElseThrow(() ->
+                        new EntityNotFoundException("İlçe bulunamadı."));
+
+        address.setCity(city);
+        address.setDistrict(district);
+        address.setNeighborhood(addressRequest.getNeighborhood());
+        address.setBuildingNo(addressRequest.getBuildingNo());
+        address.setApartmentNo(addressRequest.getApartmentNo());
         address.setCustomer(customer);
 
         return addressRepository.save(address);
     }
 
-    public List<Address> listAddresses(Integer customerId) {
-        return addressRepository.findByCustomerId(customerId);
-    }
+    public void delete(Integer customer_id, Integer id) {
 
-    public List<Address> getAllAddress() {
-        return addressRepository.findAll();
+        Customer customer = customerRepository.findById(customer_id)
+                .orElseThrow(() ->
+                        new EntityNotFoundException("Müşteri bulunamadı."));
+
+        Address address = addressRepository.findById(id)
+                .orElseThrow(() ->
+                        new EntityNotFoundException("Adres bulunamadı."));
+
+        if (!address.getCustomer().getId().equals(customer_id)) {
+            throw new IllegalArgumentException(
+                    "Bu adres bu müşteriye ait değil."
+            );
+        }
+
+        addressRepository.delete(address);
     }
 }

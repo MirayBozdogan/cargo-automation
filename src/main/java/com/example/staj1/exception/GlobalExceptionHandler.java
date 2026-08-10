@@ -1,7 +1,9 @@
 package com.example.staj1.exception;
 
+import jakarta.persistence.EntityNotFoundException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
@@ -9,37 +11,89 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 import java.util.HashMap;
 import java.util.Map;
 
-@RestControllerAdvice //hata olduğunda JSON döndürecek.
+@RestControllerAdvice // hata olduğunda JSON döndürecek.
 public class GlobalExceptionHandler {
+
     @ExceptionHandler(MethodArgumentNotValidException.class)
-    public ResponseEntity<Map<String, String>>handleValidationException(
+    public ResponseEntity<Map<String, String>> handleValidationException(
             MethodArgumentNotValidException ex) {
 
-        Map<String, String> errors = new HashMap<>();
+        Map<String, String> error = new HashMap<>();
 
-        ex.getBindingResult()
+        String message = ex.getBindingResult()
                 .getFieldErrors()
-                .forEach(error -> {
+                .get(0)
+                .getDefaultMessage();
 
-                    errors.put(
-                            error.getField(),
-                            error.getDefaultMessage()
-                    );
+        error.put("message", message);
 
-                });
-
-        return ResponseEntity.badRequest().body(errors);
+        return ResponseEntity
+                .badRequest()
+                .body(error);
     }
-    public static class CustomerHasAddressException extends RuntimeException {
-        public CustomerHasAddressException(String message) {
+
+    @ExceptionHandler(HttpMessageNotReadableException.class)
+    public ResponseEntity<Map<String, String>> handleMessageNotReadable(
+            HttpMessageNotReadableException ex) {
+
+        Map<String, String> error = new HashMap<>();
+
+        if (ex.getMessage() != null &&
+                ex.getMessage().contains("Metin değeri girilmelidir.")) {
+
+            error.put("message", "Metin değeri girilmelidir.");
+
+        } else if (ex.getMessage() != null &&
+                ex.getMessage().contains("Değer sayı olmalıdır.")) {
+
+            error.put("message", "Değer sayı olmalıdır.");
+
+        } else {
+
+            error.put("message", "Geçersiz istek.");
+        }
+
+        return ResponseEntity
+                .status(HttpStatus.BAD_REQUEST)
+                .body(error);
+    }
+    public static class DuplicateResourceException extends RuntimeException {
+
+        public DuplicateResourceException(String message) {
             super(message);
         }
     }
+    @ExceptionHandler(DuplicateResourceException.class)
+    public ResponseEntity<String> handleDuplicateResource(
+            DuplicateResourceException ex) {
 
-    @ExceptionHandler(CustomerHasAddressException.class)
-    public ResponseEntity<String> handleCustomerHasAddress(CustomerHasAddressException ex) {
-        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(ex.getMessage());
+        return ResponseEntity
+                .status(HttpStatus.BAD_REQUEST)
+                .body(ex.getMessage());
+    }
+    
+    @ExceptionHandler(EntityNotFoundException.class)
+    public ResponseEntity<Map<String, String>> handleEntityNotFound(
+            EntityNotFoundException ex) {
+
+        Map<String, String> error = new HashMap<>();
+        error.put("message", ex.getMessage());
+
+        return ResponseEntity
+                .status(HttpStatus.NOT_FOUND)
+                .body(error);
+    }
+
+    @ExceptionHandler(IllegalArgumentException.class)
+    public ResponseEntity<Map<String, String>> handleIllegalArgumentException(
+            IllegalArgumentException ex) {
+
+        Map<String, String> error = new HashMap<>();
+        error.put("message", ex.getMessage());
+
+        return ResponseEntity
+                .status(HttpStatus.BAD_REQUEST)
+                .body(error);
     }
 
 }
-

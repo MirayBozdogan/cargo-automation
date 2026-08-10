@@ -1,0 +1,29 @@
+package com.example.staj1.config;
+
+import tools.jackson.core.JacksonException;
+import tools.jackson.core.JsonParser;
+import tools.jackson.core.JsonToken;
+import tools.jackson.databind.DeserializationContext;
+import tools.jackson.databind.deser.std.StdDeserializer;
+
+public class StrictStringDeserializer extends StdDeserializer<String> {
+
+    public StrictStringDeserializer() {
+        super(String.class);
+    }
+
+    @Override
+    public String deserialize(JsonParser p, DeserializationContext ctxt)
+            throws JacksonException {
+
+        if (p.currentToken() != JsonToken.VALUE_STRING) {
+            throw ctxt.weirdStringException(
+                    p.getText(),
+                    String.class,
+                    "Metin değeri girilmelidir."
+            );
+        }
+
+        return p.getText();
+    }
+}

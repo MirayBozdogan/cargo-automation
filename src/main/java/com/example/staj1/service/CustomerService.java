@@ -45,7 +45,7 @@ public class CustomerService {
             throw new IllegalArgumentException("Bu TC zaten kayıtlı!");
         }
 
-        if(customerRepository.existsByTc(customerRequest.getTelNo()))
+        if(customerRepository.existsByTelNo(customerRequest.getTelNo()))
         {
             throw new IllegalArgumentException("Bu numara zaten kayıtlı!");
         }
@@ -95,7 +95,7 @@ public class CustomerService {
     public void deleteCustomer(Integer id) {
 
         if (addressRepository.existsByCustomerId(id)) {
-            throw new GlobalExceptionHandler.CustomerHasAddressException(
+            throw new GlobalExceptionHandler.DuplicateResourceException(
                     "Bu müşteriye ait adres kayıtları olduğu için silinemez."
             );
         }
