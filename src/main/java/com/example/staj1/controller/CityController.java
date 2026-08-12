@@ -20,14 +20,15 @@ public class CityController {
     }
 
     @GetMapping("")
-    public List<City> get(){
-        return cityService.get();
+    public List<City> getAll(){
+        return cityService.getAll();
     }
 
     // Detay
     @GetMapping("{id}")
     public City getById(@PathVariable Integer id){
         return cityService.getById(id);}
+
 
     @PostMapping
     public City create(@RequestBody @Valid CityRequest request) {

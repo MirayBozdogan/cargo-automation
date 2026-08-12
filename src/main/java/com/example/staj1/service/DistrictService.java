@@ -39,9 +39,20 @@ public class DistrictService {
                         new EntityNotFoundException("İlçe bulunamadı."));
     }
 
+    public List<District> getByCityId(Integer cityId) {
+
+        cityRepository.findById(cityId)
+                .orElseThrow(() ->
+                        new EntityNotFoundException("Şehir bulunamadı."));
+
+        return districtRepository.findByCityId(cityId);
+    }
+
     public District create(DistrictRequest request) {
 
-        if (districtRepository.existsByName(request.getName())) {
+        if (districtRepository.existsByNameIgnoreCaseAndCityId(
+                request.getName(), request.getCityId())) {
+
             throw new GlobalExceptionHandler.DuplicateResourceException(
                     "Bu ilçe zaten kayıtlı."
             );
@@ -69,8 +80,10 @@ public class DistrictService {
                         new EntityNotFoundException("Şehir bulunamadı."));
 
 
-        if (districtRepository.existsByNameAndIdNot(
-                request.getName(), request.getId())) {
+        if (districtRepository.existsByNameIgnoreCaseAndCityIdAndIdNot(
+                request.getName(),
+                request.getCityId(),
+                request.getId())) {
 
             throw new GlobalExceptionHandler.DuplicateResourceException(
                     "Bu ilçe zaten kayıtlı."

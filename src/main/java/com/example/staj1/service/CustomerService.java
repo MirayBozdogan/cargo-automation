@@ -1,15 +1,17 @@
 package com.example.staj1.service;
-import com.example.staj1.Dto.CustomerDetail;
 import com.example.staj1.Dto.CustomerRequest;
 import com.example.staj1.exception.GlobalExceptionHandler;
 import com.example.staj1.model.Customer;
 import com.example.staj1.repository.AddressRepository;
 import com.example.staj1.repository.CustomerRepository;
+import com.example.staj1.specification.CustomerSpecification;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 
@@ -28,8 +30,20 @@ public class CustomerService {
         return customerRepository.findAll();
     }
 
+    public Optional<Customer> customerGet(Integer id){
+        return customerRepository.findById( id);
+    }
+
     public Page<Customer> sayfaGetir(Pageable pageable){
     return  customerRepository.findAll(pageable);
+    }
+
+    public List<Customer> search(Map<String, String> filters) {
+
+        Specification<Customer> specification =
+                CustomerSpecification.filter(filters);
+
+        return customerRepository.findAll(specification);
     }
 
     public Customer ekle(CustomerRequest customerRequest){
@@ -102,8 +116,6 @@ public class CustomerService {
         customerRepository.deleteById(id);
     }
 
-    public Optional<Customer> customerGet(Integer id){
-        return customerRepository.findById( id);
-    }
+
 
 }

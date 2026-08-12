@@ -58,6 +58,12 @@ public class AddressService {
                         "İlçe bulunamadı."
                 ));
 
+        if (!district.getCity().getId().equals(city.getId())) {
+            throw new IllegalArgumentException(
+                    "Seçilen ilçe, seçilen şehre ait değil."
+            );
+        }
+
         Address address = new Address();
 
         address.setCity(city);
@@ -69,7 +75,7 @@ public class AddressService {
         return addressRepository.save(address);
     }
 
-    public Address update(Integer customer_id, Integer id, AddressRequest addressRequest){
+    public Address update(Integer customer_id, Integer id, AddressRequest addressRequest) {
         Customer customer = customerRepository.findById(customer_id)
                 .orElseThrow(() ->
                         new EntityNotFoundException("Müşteri bulunamadı."));
@@ -85,6 +91,12 @@ public class AddressService {
         District district = districtRepository.findById(addressRequest.getDistrictId())
                 .orElseThrow(() ->
                         new EntityNotFoundException("İlçe bulunamadı."));
+
+        if (!district.getCity().getId().equals(city.getId())) {
+            throw new IllegalArgumentException(
+                    "Seçilen ilçe, seçilen şehre ait değil."
+            );
+        }
 
         address.setCity(city);
         address.setDistrict(district);

@@ -12,6 +12,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 
@@ -27,11 +28,11 @@ public class CustomerController {
 
     @GetMapping("/list")
     public List<Customer> getir() {
-        return  customerService.getir();
+        return customerService.getir();
     }
 
     @GetMapping("/{id}")
-    public Optional<Customer> customerGet(@PathVariable Integer id){
+    public Optional<Customer> customerGet(@PathVariable Integer id) {
         return customerService.customerGet(id);
     }
 
@@ -40,23 +41,29 @@ public class CustomerController {
         return customerService.sayfaGetir(pageable);
     }
 
+    @GetMapping("/search")
+    public List<Customer> search(
+            @RequestParam Map<String, String> filters) {
+        return customerService.search(filters);
+    }
+
     @PostMapping("")
     public Customer ekle(@Valid @RequestBody CustomerRequest customerRequest) {
         return customerService.ekle(customerRequest);
     }
 
     @PostMapping("/toplu")
-    public List<Customer> topluEkle( @Valid  @RequestBody List<CustomerRequest> customers) {
+    public List<Customer> topluEkle(@Valid @RequestBody List<CustomerRequest> customers) {
         return customerService.topluEkle(customers);
     }
 
     @PutMapping("/{id}")
     public Customer guncelle(@Valid
-            @PathVariable Integer id,
-            @RequestBody CustomerRequest customerRequest) {
-
+                             @PathVariable Integer id,
+                             @RequestBody CustomerRequest customerRequest) {
         return customerService.guncelle(id, customerRequest);
     }
+
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteCustomer(@PathVariable Integer id) {
         customerService.deleteCustomer(id);

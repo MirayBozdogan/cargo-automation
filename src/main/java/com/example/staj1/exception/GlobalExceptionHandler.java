@@ -95,5 +95,17 @@ public class GlobalExceptionHandler {
                 .status(HttpStatus.BAD_REQUEST)
                 .body(error);
     }
+    public static class PriceNotFoundException extends RuntimeException {
+
+        public PriceNotFoundException(String message) {
+            super(message);
+        }
+    }
+    @ExceptionHandler(PriceNotFoundException.class)
+    public ResponseEntity<String> handlePriceNotFound(PriceNotFoundException ex) {
+        return ResponseEntity
+                .status(HttpStatus.BAD_REQUEST)
+                .body(ex.getMessage());
+    }
 
 }

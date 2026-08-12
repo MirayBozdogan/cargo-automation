@@ -29,10 +29,16 @@ public class DistrictController {
         return districtService.getById(id);
     }
 
+    @GetMapping("/city/{cityId}")
+    public List<District> getByCityId(@PathVariable Integer cityId) {
+        return districtService.getByCityId(cityId);
+    }
+
     @PostMapping
     public District create(@RequestBody @Valid DistrictRequest request) {
         return districtService.create(request);
     }
+
     @PutMapping("")
     public District update(@RequestBody @Valid DistrictRequest request){
         return districtService.update(request);

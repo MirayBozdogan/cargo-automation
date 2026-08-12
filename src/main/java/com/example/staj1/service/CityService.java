@@ -23,7 +23,7 @@ public class CityService {
         this.addressRepository = addressRepository;
     }
 
-    public List<City> get() {
+    public List<City> getAll() {
         return cityRepository.findAll();
     }
 
@@ -35,7 +35,7 @@ public class CityService {
 
     public City create(CityRequest request) {
         // Dana önce aynı isimde bir il var mı ?
-        if (cityRepository.existsByName(request.getName()))
+        if (cityRepository.existsByNameIgnoreCase(request.getName()))
             throw new GlobalExceptionHandler.DuplicateResourceException("Bu şehir zaten kayıtlı.");
 
         City city = new City();
@@ -44,16 +44,21 @@ public class CityService {
     }
 
     public City update(CityRequest request) {
-        // Bu city var mı ?
+
         City city = cityRepository.findById(request.getId())
                 .orElseThrow(() ->
                         new EntityNotFoundException("Şehir bulunamadı."));
 
-        // Dana önce aynı isimde bir il var mı kendisi hariç ?
-        if (cityRepository.existsByName(request.getName()))
-            throw new GlobalExceptionHandler.DuplicateResourceException("Bu şehir zaten kayıtlı.");
+        if (cityRepository.existsByNameIgnoreCaseAndIdNot(
+                request.getName(), request.getId())) {
+
+            throw new GlobalExceptionHandler.DuplicateResourceException(
+                    "Bu şehir zaten kayıtlı."
+            );
+        }
 
         city.setName(request.getName());
+
         return cityRepository.save(city);
     }
 
