@@ -33,14 +33,26 @@ public class AddressService {
         this.districtRepository = districtRepository;
     }
 
-    public List<Address> get() {
+    public List<Address> getAll() {
         return addressRepository.findAll();
     }
 
     public List<Address> getById(Integer customerId) {
-        return addressRepository.findByCustomerId(customerId);
-    }
 
+        Customer customer = customerRepository.findById(customerId)
+                .orElseThrow(() ->
+                        new EntityNotFoundException("Müşteri bulunamadı."));
+
+        List<Address> addresses = addressRepository.findByCustomerId(customerId);
+
+        if (addresses.isEmpty()) {
+            throw new EntityNotFoundException(
+                    "Bu müşteriye ait kayıtlı adres bulunamadı."
+            );
+        }
+
+        return addresses;
+    }
     public Address create(AddressRequest addressRequest, Integer customerId) {
 
         Customer customer = customerRepository.findById(customerId)
@@ -83,6 +95,12 @@ public class AddressService {
         Address address = addressRepository.findById(id)
                 .orElseThrow(() ->
                         new EntityNotFoundException("Adres bulunamadı."));
+
+        if (!address.getCustomer().getId().equals(customer_id)) {
+            throw new IllegalArgumentException(
+                    "Bu adres bu müşteriye ait değil."
+            );
+        }
 
         City city = cityRepository.findById(addressRequest.getCityId())
                 .orElseThrow(() ->

@@ -30,6 +30,7 @@ public class CustomerRequest {
     @NotBlank(message = "TC kimlik numarası boş olamaz.")
     @Size(min = 11, max = 11, message = "TC kimlik numarası  11 haneli olmalıdır.")
     @Column(unique = true)
+    @JsonDeserialize(using = StrictStringDeserializer.class)
     private String tc;
 
     @NotBlank(message = "Telefon numarası boş olamaz.")
@@ -37,6 +38,7 @@ public class CustomerRequest {
     @Pattern(regexp = "^0.*", message = "Telefon numarası 0 ile başlamalıdır.")
     @Pattern(regexp = "^05.*", message = "Geçerli bir telefon numarası giriniz.")
     @Column(unique = true)
+    @JsonDeserialize(using = StrictStringDeserializer.class)
     private String telNo;
 
     public String getName() {

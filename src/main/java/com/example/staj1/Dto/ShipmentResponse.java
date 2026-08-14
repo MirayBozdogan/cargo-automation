@@ -1,30 +1,19 @@
-package com.example.staj1.model;
+package com.example.staj1.Dto;
 
-import jakarta.persistence.*;
+import com.example.staj1.model.Customer;
 
 import java.math.BigDecimal;
 
+public class ShipmentResponse {
 
-@Entity
-@Table(name = "shipments")
-public class Shipment {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
     private BigDecimal width;
     private BigDecimal length;
     private BigDecimal height;
     private BigDecimal weight;
     private BigDecimal price;
-
-    @ManyToOne
-    @JoinColumn(name = "sender_id")
     private Customer sender;
-
-    @ManyToOne
-    @JoinColumn(name = "receiver_id")
     private Customer receiver;
-
     private Integer senderAddressId;
     private Integer receiverAddressId;
 
@@ -40,8 +29,6 @@ public class Shipment {
     private String receiverCity;
     private String receiverDistrict;
     private String receiverAddressText;
-
-    @Column(unique = true, nullable = false, length = 12)
     private String barcode;
 
     public Integer getId() {
@@ -124,6 +111,22 @@ public class Shipment {
         this.receiverAddressId = receiverAddressId;
     }
 
+    public String getSenderName() {
+        return senderName;
+    }
+
+    public void setSenderName(String senderName) {
+        this.senderName = senderName;
+    }
+
+    public String getSenderSurname() {
+        return senderSurname;
+    }
+
+    public void setSenderSurname(String senderSurname) {
+        this.senderSurname = senderSurname;
+    }
+
     public String getSenderCity() {
         return senderCity;
     }
@@ -140,6 +143,29 @@ public class Shipment {
         this.senderDistrict = senderDistrict;
     }
 
+    public String getSenderAddressText() {
+        return senderAddressText;
+    }
+
+    public void setSenderAddressText(String senderAddressText) {
+        this.senderAddressText = senderAddressText;
+    }
+
+    public String getReceiverName() {
+        return receiverName;
+    }
+
+    public void setReceiverName(String receiverName) {
+        this.receiverName = receiverName;
+    }
+
+    public String getReceiverSurname() {
+        return receiverSurname;
+    }
+
+    public void setReceiverSurname(String receiverSurname) {
+        this.receiverSurname = receiverSurname;
+    }
 
     public String getReceiverCity() {
         return receiverCity;
@@ -163,46 +189,6 @@ public class Shipment {
 
     public void setReceiverAddressText(String receiverAddressText) {
         this.receiverAddressText = receiverAddressText;
-    }
-
-    public String getSenderAddressText() {
-        return senderAddressText;
-    }
-
-    public void setSenderAddressText(String senderAddressText) {
-        this.senderAddressText = senderAddressText;
-    }
-
-    public String getSenderName() {
-        return senderName;
-    }
-
-    public void setSenderName(String senderName) {
-        this.senderName = senderName;
-    }
-
-    public String getSenderSurname() {
-        return senderSurname;
-    }
-
-    public void setSenderSurname(String senderSurname) {
-        this.senderSurname = senderSurname;
-    }
-
-    public String getReceiverName() {
-        return receiverName;
-    }
-
-    public void setReceiverName(String receiverName) {
-        this.receiverName = receiverName;
-    }
-
-    public String getReceiverSurname() {
-        return receiverSurname;
-    }
-
-    public void setReceiverSurname(String receiverSurname) {
-        this.receiverSurname = receiverSurname;
     }
 
     public String getBarcode() {

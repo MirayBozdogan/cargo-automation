@@ -12,4 +12,5 @@ public interface AddressRepository extends JpaRepository<Address, Integer> {
     boolean existsByCityId(Integer cityId);
 
     boolean existsByDistrictId(Integer id);
+    boolean existsByIdAndCustomerId(Integer id, Integer customerId);
 }

@@ -24,8 +24,8 @@ public class AddressController {
     }
 
     @GetMapping("/address")
-    public List<Address> get() {
-        return addressService.get();
+    public List<Address> getAll() {
+        return addressService.getAll();
     }
 
     @GetMapping("/{customer_id}/address")

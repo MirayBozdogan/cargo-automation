@@ -2,6 +2,7 @@ package com.example.staj1.controller;
 
 import com.example.staj1.Dto.CalculatePriceResponse;
 import com.example.staj1.Dto.ShipmentRequest;
+import com.example.staj1.Dto.ShipmentResponse;
 import com.example.staj1.model.Shipment;
 import com.example.staj1.service.ShipmentService;
 import jakarta.validation.Valid;
@@ -21,43 +22,55 @@ public class ShipmentController {
         this.shipmentService = shipmentService;
     }
 
-    @GetMapping("")
-    public List<Shipment> getAll() {
-        return shipmentService.getAll();
+
+    @GetMapping
+    public ResponseEntity<List<ShipmentResponse>> getAll() {
+        return ResponseEntity.ok(shipmentService.getAll());
     }
 
-    @GetMapping("{id}")
-    public Shipment get(@PathVariable Integer id) {
-        return shipmentService.get(id);
+    @GetMapping("/{id}")
+    public ShipmentResponse getById(@PathVariable Integer id) {
+        return shipmentService.getById(id);
     }
 
-    @PostMapping("")
-    public CalculatePriceResponse create(@Valid
-                           @RequestBody ShipmentRequest shipmentRequest) {
+    @GetMapping("/barcode/{barcode}")
+    public Shipment getByBarcode(@PathVariable String barcode) {
+        return shipmentService.getByBarcode(barcode);
+    }
+
+    @PostMapping
+    public ShipmentResponse create(
+            @Valid @RequestBody ShipmentRequest shipmentRequest) {
+
         return shipmentService.create(shipmentRequest);
     }
 
+    @PutMapping("/{id}")
+    public ShipmentResponse update(
+            @PathVariable Integer id,
+            @Valid @RequestBody ShipmentRequest request) {
+
+        return shipmentService.update(id, request);
+    }
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> delete(@PathVariable Integer id) {
+
+        shipmentService.delete(id);
+
+        return ResponseEntity.noContent().build();
+    }
     @PostMapping("/calculate-price")
-    public CalculatePriceResponse calculatePrice(@RequestBody ShipmentRequest shipmentRequest){
-        return shipmentService.calculatePrice(
-                shipmentRequest.getWidth(),
-                shipmentRequest.getLength(),
-                shipmentRequest.getHeight(),
-                shipmentRequest.getWeight()
+    public CalculatePriceResponse calculatePrice(
+            @Valid @RequestBody ShipmentRequest request) {
+
+        return shipmentService.calculatePriceDetail(
+                request.getWidth(),
+                request.getLength(),
+                request.getHeight(),
+                request.getWeight()
         );
     }
 
-    @PutMapping("{id}")
-    public CalculatePriceResponse update(@Valid
-                           @PathVariable Integer id,
-                           @RequestBody ShipmentRequest shipmentRequest) {
-        return shipmentService.update(id,shipmentRequest);
-    }
 
-    @DeleteMapping("/{id}")
-    public ResponseEntity<Void> delete(@PathVariable Integer id) {
-        shipmentService.delete(id);
-        return ResponseEntity.noContent().build();
-    }
 
 }
