@@ -1,5 +1,7 @@
 package com.example.staj1.service;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import com.example.staj1.Dto.AddressRequest;
 import com.example.staj1.model.Address;
 import com.example.staj1.model.City;
@@ -33,8 +35,8 @@ public class AddressService {
         this.districtRepository = districtRepository;
     }
 
-    public List<Address> getAll() {
-        return addressRepository.findAll();
+    public Page<Address> getAll(Pageable pageable) {
+        return addressRepository.findAll(pageable);
     }
 
     public List<Address> getById(Integer customerId) {

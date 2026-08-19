@@ -8,6 +8,8 @@ import com.example.staj1.service.ShipmentService;
 import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 
 import java.math.BigDecimal;
 import java.util.List;
@@ -24,8 +26,8 @@ public class ShipmentController {
 
 
     @GetMapping
-    public ResponseEntity<List<ShipmentResponse>> getAll() {
-        return ResponseEntity.ok(shipmentService.getAll());
+    public Page<Shipment> getAll(Pageable pageable) {
+        return shipmentService.getAll(pageable);
     }
 
     @GetMapping("/{id}")

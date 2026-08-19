@@ -4,11 +4,11 @@ import com.example.staj1.Dto.AddressRequest;
 import com.example.staj1.Dto.CustomerRequest;
 import com.example.staj1.model.Address;
 import com.example.staj1.service.AddressService;
-import com.example.staj1.service.CustomerService;
-import jakarta.annotation.PostConstruct;
 import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 
 import java.util.List;
 
@@ -24,8 +24,8 @@ public class AddressController {
     }
 
     @GetMapping("/address")
-    public List<Address> getAll() {
-        return addressService.getAll();
+    public Page<Address> getAll(Pageable pageable) {
+        return addressService.getAll(pageable);
     }
 
     @GetMapping("/{customer_id}/address")
