@@ -44,12 +44,12 @@ public class ShipmentService {
     }
 
     public Page<Shipment> getAll(Pageable pageable) {
-        return shipmentRepository.findAll(pageable);
+        return shipmentRepository.findByDeletedFalse(pageable);
     }
 
     public ShipmentResponse getById(Integer id) {
 
-        Shipment shipment = shipmentRepository.findById(id)
+        Shipment shipment = shipmentRepository.findByIdAndDeletedFalse(id)
                 .orElseThrow(() ->
                         new EntityNotFoundException("Gönderi bulunamadı."));
 
@@ -65,7 +65,7 @@ public class ShipmentService {
                         new EntityNotFoundException("Müşteri bulunamadı.")
                 );
 
-        return shipmentRepository.findBySender_IdOrReceiver_Id(
+       return  shipmentRepository.findBySender_IdAndDeletedFalseOrReceiver_IdAndDeletedFalse(
                 customerId,
                 customerId,
                 pageable
@@ -74,10 +74,9 @@ public class ShipmentService {
 
     public Shipment getByBarcode(String barcode) {
 
-        return shipmentRepository.findByBarcode(barcode)
+        return shipmentRepository.findByBarcodeAndDeletedFalse(barcode)
                 .orElseThrow(() ->
-                        new EntityNotFoundException("Barkod bulunamadı.")
-                );
+                        new EntityNotFoundException("Barkod bulunamadı."));
     }
 
     public ShipmentResponse create(ShipmentRequest shipmentRequest) {
@@ -429,7 +428,10 @@ public class ShipmentService {
                 .orElseThrow(() ->
                         new EntityNotFoundException("Gönderi bulunamadı."));
 
-        shipmentRepository.delete(shipment);
+
+        shipment.setDeleted(true);
+
+        shipmentRepository.save(shipment);
     }
     public BigDecimal calculatePrice(
             BigDecimal width,

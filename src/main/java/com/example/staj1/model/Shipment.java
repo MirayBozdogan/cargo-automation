@@ -44,6 +44,8 @@ public class Shipment {
     @Column(unique = true, nullable = false, length = 12)
     private String barcode;
 
+    private boolean deleted = false;
+
     public Integer getId() {
         return id;
     }
@@ -211,5 +213,13 @@ public class Shipment {
 
     public void setBarcode(String barcode) {
         this.barcode = barcode;
+    }
+
+    public boolean getDeleted() {
+        return deleted;
+    }
+
+    public void setDeleted(boolean deleted) {
+        this.deleted = deleted;
     }
 }

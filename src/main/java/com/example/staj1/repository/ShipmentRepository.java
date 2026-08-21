@@ -9,13 +9,16 @@ import java.util.Optional;
 
 public interface ShipmentRepository extends JpaRepository<Shipment, Integer> {
 
-    Optional<Shipment> findByBarcode(String barcode);
-
     boolean existsByBarcode(String barcode);
 
-    Page<Shipment> findBySender_IdOrReceiver_Id(
+    Page<Shipment> findByDeletedFalse(Pageable pageable);
+
+    Page<Shipment> findBySender_IdAndDeletedFalseOrReceiver_IdAndDeletedFalse(
             Integer senderId,
             Integer receiverId,
             Pageable pageable
     );
+    Optional<Shipment> findByBarcodeAndDeletedFalse(String barcode);
+
+    Optional<Shipment> findByIdAndDeletedFalse(Integer id);
 }
