@@ -5,6 +5,7 @@ import com.example.staj1.model.Customer;
 import com.example.staj1.repository.AddressRepository;
 import com.example.staj1.repository.CustomerRepository;
 import com.example.staj1.specification.CustomerSpecification;
+import jakarta.persistence.EntityNotFoundException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
@@ -30,8 +31,11 @@ public class CustomerService {
         return customerRepository.findAll();
     }
 
-    public Optional<Customer> customerGet(Integer id){
-        return customerRepository.findById( id);
+    public Customer customerGet(Integer id) {
+        return customerRepository.findById(id)
+                .orElseThrow(() ->
+                        new EntityNotFoundException("Müşteri bulunamadı: " + id)
+                );
     }
 
     public Page<Customer> sayfaGetir(Pageable pageable){
@@ -92,9 +96,33 @@ public class CustomerService {
         return customerRepository.saveAll(customers);
     }
 
-    public Customer guncelle(Integer id, CustomerRequest customerRequest){
+    public Customer guncelle(Integer id, CustomerRequest customerRequest) {
+
         Customer customer = customerRepository.findById(id)
-                .orElseThrow();
+                .orElseThrow(() ->
+                        new EntityNotFoundException("Müşteri bulunamadı: " + id)
+                );
+
+        if (customerRepository.existsByEmail(customerRequest.getEmail())
+                && !customer.getEmail().equals(customerRequest.getEmail())) {
+            throw new GlobalExceptionHandler.DuplicateResourceException(
+                    "Bu e-posta adresi başka bir müşteride kayıtlı!"
+            );
+        }
+
+        if (customerRepository.existsByTc(customerRequest.getTc())
+                && !customer.getTc().equals(customerRequest.getTc())) {
+            throw new GlobalExceptionHandler.DuplicateResourceException(
+                    "Bu TC başka bir müşteride kayıtlı!"
+            );
+        }
+
+        if (customerRepository.existsByTelNo(customerRequest.getTelNo())
+                && !customer.getTelNo().equals(customerRequest.getTelNo())) {
+            throw new GlobalExceptionHandler.DuplicateResourceException(
+                    "Bu telefon numarası başka bir müşteride kayıtlı!"
+            );
+        }
 
         customer.setName(customerRequest.getName());
         customer.setSurname(customerRequest.getSurname());
@@ -105,7 +133,6 @@ public class CustomerService {
 
         return customerRepository.save(customer);
     }
-
     public void deleteCustomer(Integer id) {
 
         if (addressRepository.existsByCustomerId(id)) {

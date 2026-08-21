@@ -32,7 +32,7 @@ public class CustomerController {
     }
 
     @GetMapping("/{id}")
-    public Optional<Customer> customerGet(@PathVariable Integer id) {
+    public Customer customerGet(@PathVariable Integer id) {
         return customerService.customerGet(id);
     }
 
@@ -58,9 +58,8 @@ public class CustomerController {
     }
 
     @PutMapping("/{id}")
-    public Customer guncelle(@Valid
-                             @PathVariable Integer id,
-                             @RequestBody CustomerRequest customerRequest) {
+    public Customer guncelle(@PathVariable Integer id,
+                             @Valid @RequestBody CustomerRequest customerRequest) {
         return customerService.guncelle(id, customerRequest);
     }
 

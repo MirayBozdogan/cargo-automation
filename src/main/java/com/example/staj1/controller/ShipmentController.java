@@ -35,6 +35,17 @@ public class ShipmentController {
         return shipmentService.getById(id);
     }
 
+    @GetMapping("/customer/{customerId}")
+    public Page<Shipment> getByCustomerId(
+            @PathVariable Integer customerId,
+            Pageable pageable) {
+
+        return shipmentService.getByCustomerId(
+                customerId,
+                pageable
+        );
+    }
+
     @GetMapping("/barcode/{barcode}")
     public Shipment getByBarcode(@PathVariable String barcode) {
         return shipmentService.getByBarcode(barcode);

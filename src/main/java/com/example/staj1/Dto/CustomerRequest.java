@@ -24,6 +24,7 @@ public class CustomerRequest {
 
     @NotNull(message = "Yaş boş olamaz.")
     @Min(value = 18, message = "18 yaşından küçük olamaz.")
+    @Positive(message = "Yaş 0'dan büyük olmalıdır.")
     @JsonDeserialize(using = StrictIntegerDeserializer.class)
     private Integer age;
 

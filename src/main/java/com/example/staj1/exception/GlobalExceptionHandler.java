@@ -64,12 +64,15 @@ public class GlobalExceptionHandler {
         }
     }
     @ExceptionHandler(DuplicateResourceException.class)
-    public ResponseEntity<String> handleDuplicateResource(
+    public ResponseEntity<Map<String, String>> handleDuplicateResource(
             DuplicateResourceException ex) {
+
+        Map<String, String> error = new HashMap<>();
+        error.put("message", ex.getMessage());
 
         return ResponseEntity
                 .status(HttpStatus.BAD_REQUEST)
-                .body(ex.getMessage());
+                .body(error);
     }
     
     @ExceptionHandler(EntityNotFoundException.class)

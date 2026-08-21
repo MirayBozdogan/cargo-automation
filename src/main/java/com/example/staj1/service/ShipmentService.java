@@ -46,6 +46,7 @@ public class ShipmentService {
     public Page<Shipment> getAll(Pageable pageable) {
         return shipmentRepository.findAll(pageable);
     }
+
     public ShipmentResponse getById(Integer id) {
 
         Shipment shipment = shipmentRepository.findById(id)
@@ -53,6 +54,22 @@ public class ShipmentService {
                         new EntityNotFoundException("Gönderi bulunamadı."));
 
         return toResponse(shipment);
+    }
+
+    public Page<Shipment> getByCustomerId(
+            Integer customerId,
+            Pageable pageable) {
+
+        customerRepository.findById(customerId)
+                .orElseThrow(() ->
+                        new EntityNotFoundException("Müşteri bulunamadı.")
+                );
+
+        return shipmentRepository.findBySender_IdOrReceiver_Id(
+                customerId,
+                customerId,
+                pageable
+        );
     }
 
     public Shipment getByBarcode(String barcode) {
@@ -242,9 +259,6 @@ public class ShipmentService {
                 shipmentRequest.getHeight(),
                 shipmentRequest.getWeight()
         );
-
-        shipment.setPrice(price);
-
 
         shipment.setPrice(price);
 
@@ -523,8 +537,6 @@ public class ShipmentService {
     private ShipmentResponse toResponse(Shipment shipment) {
 
         ShipmentResponse response = new ShipmentResponse();
-
-        response.setId(shipment.getId());
         response.setId(shipment.getId());
         response.setBarcode(shipment.getBarcode());
         response.setWidth(shipment.getWidth());
